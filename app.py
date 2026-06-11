@@ -91,7 +91,7 @@ if not lump.empty:
 else:
     unit = price_df[
 
-        (price_df["he_type"] == Type) &
+        (price_df["he_type"] == he_type) &
         (price_df["Tube_OD"] == Tube_OD) &
         (price_df["Tube_Length_mm"] == Tube_Length_mm) &
         (price_df["Tube_Qty"] == Tube_Qty) &
