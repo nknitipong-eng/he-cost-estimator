@@ -14,6 +14,10 @@ file = "HE_Database_PRO_FINAL.xlsx"
 spec_df = pd.read_excel(file, sheet_name="SPEC")
 time_df = pd.read_excel(file, sheet_name="TIME")
 price_df = pd.read_excel(file, sheet_name="PRICE_MASTER")
+Tube_OD_df = pd.read_excel(file, sheet_name="SPEC")
+Tube_Length_mm_df = pd.read_excel(file, sheet_name="SPEC")
+Tube_Qty_df = pd.read_excel(file, sheet_name="SPEC")
+
 
 # =========================
 # SESSION
@@ -39,12 +43,14 @@ if mode == "Select Equipment":
 else:
     eq = "Manual"
     he_type = st.selectbox("HE Type", ["Fixed", "U-Tube", "Floating"])
+    tube_OD = st.number_input("Tube OD", value=1000)
+    tube_Length_mm = st.number_input("Tube Lenth (mm)", value=1000)
     tube_qty = st.number_input("Tube Qty", value=1000)
 
 # =========================
 # SCOPE
 # =========================
-scope = st.selectbox("Scope", ["Clean at site", "Pull & Clean"])
+scope = st.selectbox("Scope", ["Pull & Clean" , "Clean at site"])
 mode_time = st.selectbox("Working Mode", ["24-hr", "08:00-23:00"])
 
 # =========================
