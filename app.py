@@ -45,7 +45,7 @@ else:
 # SCOPE
 # =========================
 scope = st.selectbox("Scope", ["Clean at site", "Pull & Clean"])
-mode_time = st.selectbox("Working Mode", ["24 hr", "08:00-23:00"])
+mode_time = st.selectbox("Working Mode", ["24-hr", "08:00-23:00"])
 
 # =========================
 # TIME CALC
@@ -69,7 +69,8 @@ days = calc_days(tube_qty, scope, mode_time)
 # 1. check lump sum
 lump = price_df[
     (price_df["EQ"] == eq) &
-    #(price_df["Scope"] == Scope) &
+    (price_df["mode_time"] == Time) &
+    (price_df["Scope"] == Scope) &
     (price_df["Lump_sum"] == 1)
 ]
 
