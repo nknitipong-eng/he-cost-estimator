@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 import io
 
-st.set_page_config(page_title="Heat Exchanger Cost Estimator by NTK", layout="wide")
+st.set_page_config(page_title="Heat Exchanger Cost Estimator", layout="wide")
 
-st.title("🔥 Heat Exchanger Cost Estimator (PRO)")
+st.title("🔥 Heat Exchanger Cost Estimator by NTK")
 
 # =========================
 # LOAD DATA
@@ -69,6 +69,7 @@ days = calc_days(tube_qty, scope, mode_time)
 # 1. check lump sum
 lump = price_df[
     (price_df["EQ"] == eq) &
+    (price_df["Scope"] == Scope) &
     (price_df["Lump_sum"] == 1)
 ]
 
