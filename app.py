@@ -43,7 +43,7 @@ if mode == "Select Equipment":
 else:
     eq = "Manual"
     he_type = st.selectbox("HE Type", ["Fixed", "U-Tube", "Floating"])
-    tube_OD = st.number_input("Tube OD", ["19.05", "25.4"])
+    tube_OD = st.number_input("Tube OD", [19.05, 25.4])
     tube_qty = st.number_input("Tube Qty", value=1000)
     
     if    he_type == "U-tube":
