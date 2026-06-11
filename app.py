@@ -1,95 +1,96 @@
 import streamlit as st
 import pandas as pd
+import io
 
-st.set_page_config(page_title="Heat Exchanger Cost Estimator (PRO)", layout="wide")
+st.set_page_config(page_title="Heat Exchanger Cost Estimator by NTK", layout="wide")
 
 st.title("🔥 Heat Exchanger Cost Estimator (PRO)")
 
 # =========================
-# SESSION STORAGE
+# LOAD DATA
+# =========================
+file = "HE_Database_PRO_FINAL.xlsx"
+
+spec_df = pd.read_excel(file, sheet_name="SPEC")
+time_df = pd.read_excel(file, sheet_name="TIME")
+price_df = pd.read_excel(file, sheet_name="PRICE_MASTER")
+
+# =========================
+# SESSION
 # =========================
 if "records" not in st.session_state:
     st.session_state.records = []
 
 # =========================
-# INPUT MODE
+# INPUT
 # =========================
-mode = st.radio("Select Mode", ["Manual Input", "Select from Equipment No."])
+mode = st.radio("Mode", ["Select Equipment", "Manual"])
 
-# (mock data – ถ้าคุณ upload Excel จริง เดี๋ยวผม map ให้เพิ่ม)
-equipment_data = pd.DataFrame({
-    "Equipment No": ["E-101", "E-102"],
-    "Type": ["Floating", "U-Tube"],
-    "Tube Qty": [1200, 800]
-})
+if mode == "Select Equipment":
+    eq = st.selectbox("Equipment No", spec_df["Equipment No"])
+    row = spec_df[spec_df["Equipment No"] == eq].iloc[0]
 
-if mode == "Select from Equipment No.":
-    eq = st.selectbox("Equipment No", equipment_data["Equipment No"])
-    selected = equipment_data[equipment_data["Equipment No"] == eq].iloc[0]
-
-    he_type = selected["Type"]
-    tube_qty = int(selected["Tube Qty"])
+    he_type = row["Type"]
+    tube_qty = int(row["Tube_Qty"])
 
     st.write("Type:", he_type)
     st.write("Tube Qty:", tube_qty)
 
 else:
+    eq = "Manual"
     he_type = st.selectbox("HE Type", ["Fixed", "U-Tube", "Floating"])
-    tube_qty = st.number_input("Tube Quantity", value=1000)
+    tube_qty = st.number_input("Tube Qty", value=1000)
 
 # =========================
 # SCOPE
 # =========================
-st.header("Scope")
-
-scope = st.selectbox("Cleaning Type", ["Clean at site", "Pull & Clean"])
-work_mode = st.selectbox("Working Mode", ["24 hr", "08:00–23:00"])
+scope = st.selectbox("Scope", ["Clean at site", "Pull & Clean"])
+mode_time = st.selectbox("Working Mode", ["24 hr", "08:00-23:00"])
 
 # =========================
-# TIME CALCULATION
+# TIME CALC
 # =========================
 def calc_days(tube, scope, mode):
+    row = time_df[(time_df["Mode"] == mode) & (time_df["Scope"] == scope)].iloc[0]
 
     if tube < 1000:
-        idx = 0
+        return row["<1000"]
     elif tube <= 2000:
-        idx = 1
+        return row["1000-2000"]
     else:
-        idx = 2
+        return row[">2000"]
 
-    if mode == "08:00–23:00":
-        table = {
-            "Pull & Clean": [6, 7, 8],
-            "Clean at site": [5, 6, 7]
-        }
-    else:
-        table = {
-            "Pull & Clean": [5, 6, 7],
-            "Clean at site": [4, 5, 6]
-        }
-
-    return table[scope][idx]
-
-days = calc_days(tube_qty, scope, work_mode)
+days = calc_days(tube_qty, scope, mode_time)
 
 # =========================
-# COST (THB)
+# COST CALC
 # =========================
-price = {
-    "Clean at site": 150,   # THB per tube
-    "Pull & Clean": 250
-}
 
-base_cost = tube_qty * price[scope]
+# 1. check lump sum
+lump = price_df[
+    (price_df["EQ"] == eq) &
+    (price_df["Lump_sum"] == 1)
+]
 
-# Factor
+if not lump.empty:
+    total_cost = lump["Price"].sum()
+
+else:
+    unit = price_df[
+        (price_df["Scope"] == scope) &
+        (price_df["Lump_sum"] == 0)
+    ].iloc[0]
+
+    total_cost = tube_qty * unit["Price"]
+
+# factor
 factor = {
     "Fixed": 1.0,
     "U-Tube": 1.15,
     "Floating": 1.25
-}[he_type]
+}.get(he_type, 1)
 
-total_cost = base_cost * factor
+total_cost = total_cost * factor
 
 # minimum
 total_cost = max(total_cost, 10000)
@@ -103,35 +104,32 @@ st.metric("Duration (Days)", days)
 st.metric("Total Cost (THB)", f"{total_cost:,.0f}")
 
 # =========================
-# SAVE RECORD
+# SAVE
 # =========================
-if st.button("✅ Add to Record"):
+if st.button("Add Record"):
     st.session_state.records.append({
-        "Equipment": eq if mode != "Manual Input" else "Manual",
+        "Equipment": eq,
         "Type": he_type,
         "Tube Qty": tube_qty,
         "Scope": scope,
-        "Work Mode": work_mode,
+        "Work Mode": mode_time,
         "Days": days,
         "Cost (THB)": total_cost
     })
 
 # =========================
-# SHOW TABLE
+# DISPLAY
 # =========================
-st.header("Saved Records")
-
 df = pd.DataFrame(st.session_state.records)
+st.subheader("Saved Records")
 st.dataframe(df)
 
 # =========================
 # EXPORT EXCEL
 # =========================
-import io
-
 if not df.empty:
     output = io.BytesIO()
-
+    
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         df.to_excel(writer, index=False)
 
