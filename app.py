@@ -43,10 +43,14 @@ if mode == "Select Equipment":
 else:
     eq = "Manual"
     he_type = st.selectbox("HE Type", ["Fixed", "U-Tube", "Floating"])
-    tube_OD = st.number_input("Tube OD", value=1000)
-    tube_Length_mm = st.number_input("Tube Lenth (mm)", value=1000)
+    tube_OD = st.number_input("Tube OD", ["19.05", "25.4"])
     tube_qty = st.number_input("Tube Qty", value=1000)
-
+    
+    if    he_type == "U-tube":
+        tube_Length_mm = st.number_input("Tube Lenth (m)", ["0-4.88 m", "4.88 m - 7.32 m"])
+    else:
+        tube_Length_mm = st.number_input("Tube Lenth (mm)", ["100-200U", "201-400U", "401-600U", "601-800U", "801-1000U"])
+    
 # =========================
 # SCOPE
 # =========================
