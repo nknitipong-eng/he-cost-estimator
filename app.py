@@ -127,18 +127,17 @@ st.dataframe(df)
 # =========================
 # EXPORT EXCEL
 # =========================
-def convert_df(df):
-    return df.to_excel(index=False, engine="openpyxl")
+import io
 
 if not df.empty:
-    file_name = "HE_estimation.xlsx"
-    buffer = pd.ExcelWriter(file_name, engine="openpyxl")
-    df.to_excel(buffer, index=False)
-    buffer.close()
+    output = io.BytesIO()
 
-    with open(file_name, "rb") as f:
-        st.download_button(
-            "📥 Download Excel",
-            f,
-            file_name=file_name
-        )
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+        df.to_excel(writer, index=False)
+
+    st.download_button(
+        label="📥 Download Excel",
+        data=output.getvalue(),
+        file_name="HE_estimation.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
