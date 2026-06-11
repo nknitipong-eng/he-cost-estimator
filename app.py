@@ -4,7 +4,7 @@ import io
 
 st.set_page_config(page_title="Heat Exchanger Cost Estimator", layout="wide")
 
-st.title("🔥 Heat Exchanger Cost Estimator by NTK")
+st.title("🔥 Heat Exchanger Cost Estimator")
 
 # =========================
 # LOAD DATA
@@ -81,7 +81,7 @@ days = calc_days(tube_qty, scope, mode_time)
 lump = price_df[
     (price_df["EQ"] == eq) &
     (price_df["Time"] == mode_time) &
-    #(price_df["SCOPE"] == scope) &
+    (price_df["SCOPE"] == scope) &
     (price_df["Lump_sum"] == 1)
 ]
 
@@ -90,10 +90,20 @@ if not lump.empty:
 
 else:
     unit = price_df[
-      #  (price_df["Scope"] == scope) &
+
+        (price_df["he_type"] == Type) &
+        (price_df["Tube_OD"] == Tube_OD) &
+        (price_df["Tube_Length_mm"] == Tube_Length_mm) &
+        (price_df["Tube_Qty"] == Tube_Qty) &
+        (price_df["Scope"] == scope) &
         (price_df["Lump_sum"] == 0)
     ].iloc[0]
 
+
+
+
+    
+    total_cost = unit["Price"].sum()
     total_cost = 1 * unit["Price"]
 
 # minimum
