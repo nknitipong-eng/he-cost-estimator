@@ -47,9 +47,10 @@ else:
     tube_qty = st.number_input("Tube Qty", value=1000)
     
     if    he_type == "U-tube":
-        tube_Length_mm = st.selectbox("Tube Lenth (m)", ["0-4.88 m", "4.88 m - 7.32 m"])
-    else:
         tube_Length_mm = st.selectbox("Tube Lenth (mm)", ["100-200U", "201-400U", "401-600U", "601-800U", "801-1000U"])
+    else:
+        tube_Length_mm = st.selectbox("Tube Lenth (m)", ["0-4.88 m", "4.88 m - 7.32 m"])
+        
     
 # =========================
 # SCOPE
