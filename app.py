@@ -70,7 +70,7 @@ days = calc_days(tube_qty, scope, mode_time)
 lump = price_df[
     (price_df["EQ"] == eq) &
     (price_df["Time"] == mode_time) &
-    (price_df["Scope"] == scope) &
+    #(price_df["Scope"] == scope) &
     (price_df["Lump_sum"] == 1)
 ]
 
@@ -86,7 +86,7 @@ else:
     total_cost = 1 * unit["Price"]
 
 # minimum
-total_cost = max(total_cost, 250000)
+total_cost = max(total_cost, 9999)
 
 # =========================
 # OUTPUT
