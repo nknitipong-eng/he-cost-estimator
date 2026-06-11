@@ -142,4 +142,3 @@ if not df.empty:
             f,
             file_name=file_name
         )
-``
