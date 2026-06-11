@@ -1,121 +1,145 @@
 import streamlit as st
+import pandas as pd
 
-st.set_page_config(page_title="HE Cost Estimator", layout="wide")
+st.set_page_config(page_title="Heat Exchanger Cost Estimator (PRO)", layout="wide")
 
 st.title("🔥 Heat Exchanger Cost Estimator (PRO)")
 
-# ========================
-# INPUT SECTION
-# ========================
-st.header("Input Parameters")
+# =========================
+# SESSION STORAGE
+# =========================
+if "records" not in st.session_state:
+    st.session_state.records = []
 
-col1, col2 = st.columns(2)
+# =========================
+# INPUT MODE
+# =========================
+mode = st.radio("Select Mode", ["Manual Input", "Select from Equipment No."])
 
-with col1:
+# (mock data – ถ้าคุณ upload Excel จริง เดี๋ยวผม map ให้เพิ่ม)
+equipment_data = pd.DataFrame({
+    "Equipment No": ["E-101", "E-102"],
+    "Type": ["Floating", "U-Tube"],
+    "Tube Qty": [1200, 800]
+})
+
+if mode == "Select from Equipment No.":
+    eq = st.selectbox("Equipment No", equipment_data["Equipment No"])
+    selected = equipment_data[equipment_data["Equipment No"] == eq].iloc[0]
+
+    he_type = selected["Type"]
+    tube_qty = int(selected["Tube Qty"])
+
+    st.write("Type:", he_type)
+    st.write("Tube Qty:", tube_qty)
+
+else:
     he_type = st.selectbox("HE Type", ["Fixed", "U-Tube", "Floating"])
     tube_qty = st.number_input("Tube Quantity", value=1000)
-    tube_length = st.number_input("Tube Length (m)", value=6.0)
 
-with col2:
-    shell_dia = st.number_input("Shell Diameter (mm)", value=900)
-    tube_od = st.selectbox("Tube OD", ["1/2\"", "3/4\"", "1\""])
-
-# ========================
+# =========================
 # SCOPE
-# ========================
-st.header("Scope Selection")
+# =========================
+st.header("Scope")
 
-cleaning = st.checkbox("Cleaning")
-retubing = st.checkbox("Retubing")
-plugging = st.checkbox("Plugging")
-hydrotest = st.checkbox("Hydrotest")
-bundle_pull = st.checkbox("Bundle Pull")
+scope = st.selectbox("Cleaning Type", ["Clean at site", "Pull & Clean"])
+work_mode = st.selectbox("Working Mode", ["24 hr", "08:00–23:00"])
 
-# ========================
-# PRICE TABLE
-# ========================
+# =========================
+# TIME CALCULATION
+# =========================
+def calc_days(tube, scope, mode):
+
+    if tube < 1000:
+        idx = 0
+    elif tube <= 2000:
+        idx = 1
+    else:
+        idx = 2
+
+    if mode == "08:00–23:00":
+        table = {
+            "Pull & Clean": [6, 7, 8],
+            "Clean at site": [5, 6, 7]
+        }
+    else:
+        table = {
+            "Pull & Clean": [5, 6, 7],
+            "Clean at site": [4, 5, 6]
+        }
+
+    return table[scope][idx]
+
+days = calc_days(tube_qty, scope, work_mode)
+
+# =========================
+# COST (THB)
+# =========================
 price = {
-    "Cleaning": {"mat": 2, "lab": 3},
-    "Retubing": {"mat": 12, "lab": 8},
-    "Plugging": {"mat": 1, "lab": 2},
-    "Hydrotest": {"mat": 200, "lab": 300},
-    "Bundle Pull": {"mat": 300, "lab": 500},
+    "Clean at site": 150,   # THB per tube
+    "Pull & Clean": 250
 }
 
-# ========================
-# FACTORS
-# ========================
-type_factor = {
+base_cost = tube_qty * price[scope]
+
+# Factor
+factor = {
     "Fixed": 1.0,
     "U-Tube": 1.15,
     "Floating": 1.25
 }[he_type]
 
-if tube_qty < 500:
-    tube_factor = 1.0
-elif tube_qty <= 1000:
-    tube_factor = 0.95
-else:
-    tube_factor = 0.9
+total_cost = base_cost * factor
 
-# ========================
-# CALCULATION
-# ========================
-material = 0
-labor = 0
+# minimum
+total_cost = max(total_cost, 10000)
 
-# Cleaning logic (ลดราคา ถ้ามี Retubing)
-if cleaning:
-    rate = 0.3 if retubing else 1.0
-    material += tube_qty * price["Cleaning"]["mat"] * rate
-    labor += tube_qty * price["Cleaning"]["lab"] * rate
-
-if retubing:
-    material += tube_qty * price["Retubing"]["mat"]
-    labor += tube_qty * price["Retubing"]["lab"]
-
-if plugging:
-    material += tube_qty * price["Plugging"]["mat"]
-    labor += tube_qty * price["Plugging"]["lab"]
-
-if hydrotest:
-    material += price["Hydrotest"]["mat"]
-    labor += price["Hydrotest"]["lab"]
-
-if bundle_pull:
-    material += price["Bundle Pull"]["mat"]
-    labor += price["Bundle Pull"]["lab"]
-
-# Apply factors
-total = (material + labor) * type_factor * tube_factor
-
-# Minimum charge
-total = max(total, 300)
-
-# ========================
+# =========================
 # OUTPUT
-# ========================
-st.header("💰 Cost Summary")
+# =========================
+st.header("Result")
 
-col1, col2, col3 = st.columns(3)
+st.metric("Duration (Days)", days)
+st.metric("Total Cost (THB)", f"{total_cost:,.0f}")
 
-col1.metric("Material Cost", f"${material:,.2f}")
-col2.metric("Labor Cost", f"${labor:,.2f}")
-col3.metric("Total Cost (USD)", f"${total:,.2f}")
+# =========================
+# SAVE RECORD
+# =========================
+if st.button("✅ Add to Record"):
+    st.session_state.records.append({
+        "Equipment": eq if mode != "Manual Input" else "Manual",
+        "Type": he_type,
+        "Tube Qty": tube_qty,
+        "Scope": scope,
+        "Work Mode": work_mode,
+        "Days": days,
+        "Cost (THB)": total_cost
+    })
 
-# Breakdown
-st.subheader("Cost Breakdown")
+# =========================
+# SHOW TABLE
+# =========================
+st.header("Saved Records")
 
-data = {
-    "Material": material,
-    "Labor": labor
-}
+df = pd.DataFrame(st.session_state.records)
+st.dataframe(df)
 
-st.bar_chart(data)
+# =========================
+# EXPORT EXCEL
+# =========================
+def convert_df(df):
+    return df.to_excel(index=False, engine="openpyxl")
 
-# ========================
-# DEBUG INFO
-# ========================
-with st.expander("Show Factors"):
-    st.write("Type Factor:", type_factor)
-    st.write("Tube Factor:", tube_factor)
+if not df.empty:
+    file_name = "HE_estimation.xlsx"
+    buffer = pd.ExcelWriter(file_name, engine="openpyxl")
+    df.to_excel(buffer, index=False)
+    buffer.close()
+
+    with open(file_name, "rb") as f:
+        st.download_button(
+            "📥 Download Excel",
+            f,
+            file_name=file_name
+        )
+``
