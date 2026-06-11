@@ -34,11 +34,15 @@ if mode == "Select Equipment":
     eq = st.selectbox("Equipment No", spec_df["Equipment No"])
     row = spec_df[spec_df["Equipment No"] == eq].iloc[0]
 
-    he_type = row["Type"]
+    he_type = row["he_type"]
     tube_qty = int(row["Tube_Qty"])
+    Tube_OD = int(row["Tube_OD"])
+    Tube_Length_mm = int(row["Tube_Length_mm"])
 
     st.write("Type:", he_type)
     st.write("Tube Qty:", tube_qty)
+
+    st.write("Tube OD:", Tube_OD)
 
 else:
     eq = "Manual"
