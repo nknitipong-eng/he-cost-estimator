@@ -81,7 +81,7 @@ days = calc_days(tube_qty, scope, mode_time)
 lump = price_df[
     (price_df["EQ"] == eq) &
     (price_df["Time"] == mode_time) &
-    (price_df["SCOPE"] == scope) &
+    #(price_df["SCOPE"] == scope) &
     (price_df["Lump_sum"] == 1)
 ]
 
@@ -90,7 +90,7 @@ if not lump.empty:
 
 else:
     unit = price_df[
-        (price_df["Scope"] == scope) &
+      #  (price_df["Scope"] == scope) &
         (price_df["Lump_sum"] == 0)
     ].iloc[0]
 
