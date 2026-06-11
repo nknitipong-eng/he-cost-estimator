@@ -82,19 +82,10 @@ else:
         (price_df["Lump_sum"] == 0)
     ].iloc[0]
 
-    total_cost = tube_qty * unit["Price"]
-
-# factor
-factor = {
-    "Fixed": 1.0,
-    "U-Tube": 1.15,
-    "Floating": 1.25
-}.get(he_type, 1)
-
-total_cost = total_cost * factor
+    total_cost = 1 * unit["Price"]
 
 # minimum
-total_cost = max(total_cost, 10000)
+total_cost = max(total_cost, 250000)
 
 # =========================
 # OUTPUT
