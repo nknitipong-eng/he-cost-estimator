@@ -112,7 +112,7 @@ else:
     ]
 
 # filter time
-if Time == "08:00-23:00":
+if mode_time == "08:00-23:00":
     cost_filter = cost_filter[
         cost_filter["Time"] != "24-hr"
     ]
