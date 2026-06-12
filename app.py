@@ -46,7 +46,6 @@ if mode == "Select Equipment":
 
     st.write("Type:", He_type)
     st.write("Tube Qty:", tube_qty)
-
     st.write("Tube OD:", Tube_OD)
 
 else:
@@ -107,9 +106,6 @@ else:
         (price_df["Scope"] == scope) &
         (price_df["Lump_sum"] == 0)
     ].iloc[0]
-
-
-    st.metric("Total_cost", f"{total_cost:,.0f}")
     
     total_cost = unit["Price"].sum()
     total_cost = unit["Price"] + 150000
@@ -179,28 +175,11 @@ if st.button("Add Record"):
     })
 
 # =========================
-# DISPLAY + DELETE
+# DISPLAY
 # =========================
-
-df = pd.DataFrame(st.session_state.records)   # ✅ FIX 1
-
+df = pd.DataFrame(st.session_state.records)
 st.subheader("Saved Records")
-
-if not df.empty:
-    for i, r in enumerate(st.session_state.records):   # ✅ FIX 2
-        cols = st.columns([6,1])
-
-        cols[0].write(r)
-
-        if cols[1].button("❌", key=f"del_{i}"):
-            st.session_state.records.pop(i)
-            st.rerun()
-
-    st.dataframe(pd.DataFrame(st.session_state.records))
-
-else:
-    st.info("No records yet")   # ✅ FIX 3
-
+st.dataframe(df)
 
 # =========================
 # CLEAR ALL
@@ -208,13 +187,6 @@ else:
 if st.button("🗑 Clear All Records"):
     st.session_state.records = []
     st.rerun()
-
-# =========================
-# DISPLAY
-# =========================
-df = pd.DataFrame(st.session_state.records)
-st.subheader("Saved Records")
-st.dataframe(df)
 
 # =========================
 # EXPORT EXCEL
