@@ -86,21 +86,26 @@ days = calc_days(tube_qty, scope, mode_time)
 # =========================
 
 # 1. check lump sum
-lump = price_df[
+# =========================
+
+lump_df = price_df[
     (price_df["EQ"] == eq) &
     (price_df["Scope"] == scope) &
-    (price_df["Time"] == "All") &
+    ((price_df["Time"] == mode_time) | (price_df["Time"] == "All")) &
     (price_df["Lump_sum"] == 1)
 ]
 
-
+# ✅ PRIORITY: เอาเฉพาะ mode ที่เลือกก่อน
 exact = lump_df[lump_df["Time"] == mode_time]
 
 if not exact.empty:
     lump = exact
-else:
+elif not lump_df.empty:
     lump = lump_df
+else:
+    lump = pd.DataFrame()
 
+# 2. Non lump sum
 if not lump.empty:
     total_cost = lump["Price"].sum()
 
