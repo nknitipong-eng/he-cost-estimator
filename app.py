@@ -121,16 +121,18 @@ total_cost = max(total_cost, 9999)
 # =========================
 
 # ✅ FIX 1: filter scope ตามที่ต้องการ
+
 if scope == "Pull & Clean":
     cost_filter = price_df[
         (price_df["EQ"] == eq) &
-        (price_df["Scope"] != "Clean at site")
+        (price_df["Scope"] == "Pull & Clean")
     ]
 else:
     cost_filter = price_df[
         (price_df["EQ"] == eq) &
-        (price_df["Scope"] != "Pull & Clean")
+        (price_df["Scope"] == "Clean at site")
     ]
+
 
 # =========================
 # COST TABLE (TABLE เดียว)
@@ -162,7 +164,7 @@ cost_df["Total Cost"] = cost_df["Unit Rate"] * cost_df["Qty"]
 
 all_cols = cost_df.columns.tolist()
 
-hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type", "OD", "Tube", "Length", "Description","Note"]
+hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type", "OD", "Tube", "Length", "Description","Note","He_type"]
 
 # ✅ ตัด column ที่ต้องการซ่อนออก
 default_cols = [c for c in all_cols if c not in hidden_cols]
