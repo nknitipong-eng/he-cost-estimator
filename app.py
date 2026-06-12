@@ -12,6 +12,9 @@ st.title("🔥 Heat Exchanger Cost Estimator")
 file = "HE_Database_PRO_FINAL.xlsx"
 
 spec_df = pd.read_excel(file, sheet_name="SPEC")
+spec_df["Equipment No"] = spec_df["Equipment No"].astype(str).str.upper()
+spec_df = spec_df.sort_values(by="Equipment
+
 time_df = pd.read_excel(file, sheet_name="TIME")
 price_df = pd.read_excel(file, sheet_name="PRICE_MASTER")
 Tube_OD_df = pd.read_excel(file, sheet_name="SPEC")
@@ -32,6 +35,7 @@ mode = st.radio("Mode", ["Select Equipment", "Manual"])
 
 if mode == "Select Equipment":
     eq = st.selectbox("Equipment No", spec_df["Equipment No"])
+    
     row = spec_df[spec_df["Equipment No"] == eq].iloc[0]
 
     he_type = row["he_type"]
