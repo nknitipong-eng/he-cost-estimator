@@ -122,38 +122,6 @@ total_cost = max(total_cost, 9999)
 # COST BREAKDOWN TABLE
 # =========================
 
-cost_breakdown = []
-
-# LUMP CASE
-if not lump.empty:
-    for _, r in lump.iterrows():
-        cost_breakdown.append({
-            "Item": r["Scope"],
-            "Type": r["Type"],
-            "Unit Cost": r["Price"],
-            "Qty": 1,
-            "Total": r["Price"]
-        })
-
-# UNIT CASE
-else:
-    unit = price_df[
-        (price_df["Scope"] == scope) &
-        (price_df["Lump_sum"] == 0)
-    ].iloc[0]
-
-    cost_breakdown.append({
-        "Item": scope,
-        "Type": "UNIT",
-        "Unit Cost": unit["Price"],
-        "Qty": tube_qty,
-        "Total": tube_qty * unit["Price"]
-    })
-
-cost_df = pd.DataFrame(cost_breakdown)
-
-st.subheader("💰 Cost Breakdown")
-st.dataframe(cost_df)
 
 # =========================
 # OUTPUT
