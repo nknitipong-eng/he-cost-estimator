@@ -172,19 +172,20 @@ edited_df = st.data_editor(
 
         # ✅ Unit Rate lock + format
         "Unit Rate": st.column_config.NumberColumn(
-            format="%d",
+            format="%,d",
             disabled=True
         ),
 
         # ✅ Qty = integer only
         "Qty": st.column_config.NumberColumn(
+            format="%,d",
             min_value=1,
             step=1
         ),
 
         # ✅ Total Cost auto
         "Total Cost": st.column_config.NumberColumn(
-            format="%d",
+            format="%,d",
             disabled=True
         ),
     }
