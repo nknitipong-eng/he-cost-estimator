@@ -138,6 +138,9 @@ else:
 
 st.subheader("💰 Cost Breakdown")
 
+cost_df["Unit Rate"] = cost_df["Unit Rate"].astype(float)
+cost_df["Qty"] = cost_df.get("Qty", 1).astype(int)
+
 # ✅ เตรียม DataFrame
 cost_df = cost_filter.copy()
 
