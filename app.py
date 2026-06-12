@@ -109,8 +109,7 @@ else:
     ].iloc[0]
 
 
-
-
+    st.metric("Total_cost", f"{total_cost:,.0f}")
     
     total_cost = unit["Price"].sum()
     total_cost = unit["Price"] + 150000
