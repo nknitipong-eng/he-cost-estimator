@@ -95,13 +95,6 @@ lump_df = price_df[
     (price_df["Lump_sum"] == 1)
 ]
 
-# ✅ PRIORITY: เอาเฉพาะ mode ที่เลือกก่อน
-exact = lump_df[lump_df["Time"] == mode_time]
-
-if not exact.empty:
-    lump = exact
-elif not lump_df.empty:
-    lump = lump_df
 else:
     lump = pd.DataFrame()
 
