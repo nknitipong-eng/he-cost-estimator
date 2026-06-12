@@ -88,7 +88,7 @@ days = calc_days(tube_qty, scope, mode_time)
 # 1. check lump sum
 lump = price_df[
     (price_df["EQ"] == eq) &
-    ((price_df["Time"] == mode_time) or (price_df["Time"] == "All"))&
+    (price_df["Time"] == mode_time) or (price_df["Time"] == "All")&
     (price_df["Scope"] == scope) &
     (price_df["Lump_sum"] == 1)
 ]
