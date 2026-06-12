@@ -114,42 +114,77 @@ else:
 total_cost = max(total_cost, 9999)
 
 
+
 # =========================
-# COST BREAKDOWN TABLE
+# COST FILTER (ตาม Scope)
 # =========================
 
-cost_breakdown = []
-
-# LUMP CASE
-if not lump.empty:
-    for _, r in lump.iterrows():
-        cost_breakdown.append({
-            "Scope": r["Scope"],
-            "Type": r["He_type"],
-            "Unit Cost": r["Price"],
-            "Qty": 1,
-            "Total": r["Price"]
-        })
-
-# UNIT CASE
+# ✅ FIX 1: filter scope ตามที่ต้องการ
+if scope == "Pull & Clean":
+    cost_filter = price_df[
+        (price_df["EQ"] == eq) &
+        (price_df["Scope"] != "Clean at site")   # ✅ ตัด Clean at site
+    ]
 else:
-    unit = price_df[
-        (price_df["Scope"] == scope) &
-        (price_df["Lump_sum"] == 0)
-    ].iloc[0]
+    cost_filter = price_df[
+        (price_df["EQ"] == eq) &
+        (price_df["Scope"] != "Pull & Clean")   # ✅ ตัด Pull & Clean
+    ]
 
-    cost_breakdown.append({
-        "Scope": scope,
-        "Type": "UNIT",
-        "Unit Cost": unit["Price"],
-        "Qty": tube_qty,
-        "Total": tube_qty * unit["Price"]
-    })
+# =========================
+# COST TABLE
+# =========================
+cost_df = cost_filter[["Scope", "Type", "Price"]].copy()
 
-cost_df = pd.DataFrame(cost_breakdown)
+cost_df.rename(columns={
+    "Price": "Unit Cost"
+}, inplace=True)
 
+# ✅ FIX 2: ให้ Qty แก้ได้
+if "Qty" not in cost_df.columns:
+    cost_df["Qty"] = 1
+
+# คำนวณ Total
+cost_df["Total"] = cost_df["Unit Cost"] * cost_df["Qty"]
+
+# =========================
+# EDITABLE TABLE + DELETE
+# =========================
 st.subheader("💰 Cost Breakdown")
-st.dataframe(cost_df)
+
+edited_df = st.data_editor(
+    cost_df,
+    num_rows="dynamic",   # ✅ FIX 3: เพิ่ม/ลบ row ได้
+    use_container_width=True
+)
+
+# ✅ FIX 4: คำนวณใหม่หลังแก้ Qty
+edited_df["Total"] = edited_df["Unit Cost"] * edited_df["Qty"]
+
+# =========================
+# DELETE ROW BUTTON
+# =========================
+st.write("🗑 Delete Row")
+
+rows_to_delete = []
+
+for i in range(len(edited_df)):
+    cols = st.columns([6,1])
+    cols[0].write(f"Row {i} - {edited_df.iloc[i]['Scope']}")
+    
+    if cols[1].button("❌", key=f"delete_row_{i}"):
+        rows_to_delete.append(i)
+
+# ลบ row ที่เลือก
+if rows_to_delete:
+    edited_df = edited_df.drop(rows_to_delete).reset_index(drop=True)
+
+# =========================
+# FINAL COST
+# =========================
+total_cost = edited_df["Total"].sum()
+
+st.metric("Total Cost (THB)", f"{total_cost:,.0f}")
 
 
 # =========================
