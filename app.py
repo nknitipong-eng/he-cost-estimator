@@ -129,55 +129,57 @@ else:
         (price_df["Scope"] != "Pull & Clean")
     ]
 
-# =========================
-# COST TABLE
-# =========================
-cost_df = cost_filter[["EQ", "Scope", "He_type", "Time", "Price"]].copy()
+# =========================# =========================# =========================# =========================
 
-cost_df.rename(columns={
-    "Price": "Unit Rate"
-}, inplace=True)
-
-# ✅ FIX 2: ให้ Qty แก้ได้
-if "Qty" not in cost_df.columns:
-    cost_df["Qty"] = 1
-
-# คำนวณ Total
-cost_df["Total"] = cost_df["Unit Rate"] * cost_df["Qty"]
 
 # =========================
-# EDITABLE TABLE
+# COST TABLE (TABLE เดียว)
 # =========================
 
 st.subheader("💰 Cost Breakdown")
 
-# ✅ ensure column มี dtype ถูกต้อง
-cost_df["Unit Rate"] = cost_df["Unit Rate"].astype(float)
-cost_df["Qty"] = cost_df.get("Qty", 1).astype(int)
+# ✅ เตรียม DataFrame
+cost_df = cost_filter.copy()
+
+# map column
+cost_df = cost_df.rename(columns={
+    "Price": "Unit Rate"
+})
+
+# ✅ ensure column
+if "Qty" not in cost_df.columns:
+    cost_df["Qty"] = 1
+
+# คำนวณ
+cost_df["Total Cost"] = cost_df["Unit Rate"] * cost_df["Qty"]
 
 # =========================
-# DATA EDITOR
+# ✅ EDITABLE TABLE (ตัวเดียวพอ)
 # =========================
 edited_df = st.data_editor(
     cost_df,
-    num_rows="dynamic",
     use_container_width=True,
+    num_rows="dynamic",  # ✅ add/delete row
 
     column_config={
-        # ✅ FIX 1: Unit Rate format ไม่มีทศนิยม + comma
+        "EQ": st.column_config.TextColumn(disabled=True),
+        "Scope": st.column_config.TextColumn(disabled=True),
+        "He_type": st.column_config.TextColumn(disabled=True),
+        "Time": st.column_config.TextColumn(disabled=True),
+
+        # ✅ Unit Rate lock + format
         "Unit Rate": st.column_config.NumberColumn(
             format="%d",
-            step=1,
-            disabled=True   # 🔒 กัน user แก้
+            disabled=True
         ),
 
-        # ✅ FIX 2: Qty = integer บวกเท่านั้น
+        # ✅ Qty = integer only
         "Qty": st.column_config.NumberColumn(
             min_value=1,
-            step=1,   # integer เท่านั้น
+            step=1
         ),
 
-        # ✅ FIX 3: Total Cost (rename + format)
+        # ✅ Total Cost auto
         "Total Cost": st.column_config.NumberColumn(
             format="%d",
             disabled=True
@@ -186,32 +188,19 @@ edited_df = st.data_editor(
 )
 
 # =========================
-# CALCULATE
+# ✅ CALCULATE REAL-TIME
 # =========================
-
-# ✅ FIX 4: rename Total → Total Cost
 edited_df["Total Cost"] = edited_df["Unit Rate"] * edited_df["Qty"]
 
 # =========================
-# FORMAT DISPLAY (comma)
-# =========================
-display_df = edited_df.copy()
-
-display_df["Unit Rate"] = display_df["Unit Rate"].map(lambda x: f"{int(x):,}")
-display_df["Total Cost"] = display_df["Total Cost"].map(lambda x: f"{int(x):,}")
-
-st.dataframe(display_df, use_container_width=True)
-
-# =========================
-# TOTAL RESULT
+# ✅ RESULT
 # =========================
 total_cost = edited_df["Total Cost"].sum()
 
 st.metric("Total Cost (THB)", f"{int(total_cost):,}")
 
 
-
-
+# =========================# =========================# =========================# =========================
 
 
 # =========================
