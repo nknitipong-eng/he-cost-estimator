@@ -124,7 +124,7 @@ cost_breakdown = []
 if not lump.empty:
     for _, r in lump.iterrows():
         cost_breakdown.append({
-            "Item": r["Scope"],
+            "Scope": r["Scope"],
             "Type": r["He_type"],
             "Unit Cost": r["Price"],
             "Qty": 1,
