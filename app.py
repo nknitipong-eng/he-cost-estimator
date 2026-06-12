@@ -196,9 +196,9 @@ edited_df = st.data_editor(
 
 all_cols = edited_df.columns.tolist()
 
-hidden_cols = ["#", "PO", "Lumpsum", "Clean_Type","OD","Tube","Length","Description"]   
+hidden_cols = ["#", "PO", "Lumpsum", "Clean_Type", "OD", "Tube", "Length", "Description"]
 
-visible_cols_default = [c for c in all_cols if c not in hidden_cols]
+default_cols = [c for c in all_cols if c not in hidden_cols]
 
 
 # =========================
