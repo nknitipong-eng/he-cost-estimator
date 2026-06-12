@@ -160,10 +160,16 @@ cost_df["Total Cost"] = cost_df["Unit Rate"] * cost_df["Qty"]
 # ✅ EDITABLE TABLE (ตัวเดียวพอ)
 # =========================
 
-hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type","OD","Tube","Length","Description"]
+all_cols = cost_df.columns.tolist()
+
+hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type", "OD", "Tube", "Length", "Description"]
+
+# ✅ ตัด column ที่ต้องการซ่อนออก
+default_cols = [c for c in all_cols if c not in hidden_cols]
 
 edited_df = st.data_editor(
     cost_df,
+    column_order=default_cols,
     use_container_width=True,
     num_rows="dynamic",  # ✅ add/delete row
 
