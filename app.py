@@ -136,7 +136,7 @@ cost_df = cost_filter[["EQ", "Scope", "He_type", "Time", "Price"]].copy()
 
 cost_df.rename(columns={
     "Price": "Unit Rate"
-}, inplace=flase)
+}, inplace=true)
 
 # ✅ FIX 2: ให้ Qty แก้ได้
 if "Qty" not in cost_df.columns:
