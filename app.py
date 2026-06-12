@@ -116,23 +116,6 @@ else:
 # minimum
 total_cost = max(total_cost, 9999)
 
-# =========================
-# COST FILTER (ตาม Scope)
-# =========================
-
-# ✅ FIX 1: filter scope ตามที่ต้องการ
-
-if scope == "Pull & Clean":
-    cost_filter = price_df[
-        (price_df["EQ"] == eq) &
-        (price_df["Scope"] == "Pull & Clean")
-    ]
-else:
-    cost_filter = price_df[
-        (price_df["EQ"] == eq) &
-        (price_df["Scope"] == "Clean at site")
-    ]
-
 
 # =========================
 # COST TABLE (TABLE เดียว)
