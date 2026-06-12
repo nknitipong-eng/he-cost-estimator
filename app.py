@@ -148,10 +148,29 @@ total_cost = max(total_cost, 9999)
 # COST TABLE (TABLE เดียว)
 # =========================
 
+
+if "cost_table" not in st.session_state:
+    st.session_state.cost_table = None
+
+
 st.subheader("💰 Cost Breakdown")
 
 # ✅ เตรียม DataFrame
-cost_df = cost_filter.copy()
+####cost_df = cost_filter.copy()
+if st.session_state.cost_table is None:
+    cost_df = cost_filter.copy()
+
+    cost_df = cost_df.rename(columns={"Price": "Unit Rate"})
+
+    if "Qty" not in cost_df.columns:
+        cost_df["Qty"] = 1
+
+    cost_df["Unit Rate"] = cost_df["Unit Rate"].astype(float)
+    cost_df["Qty"] = cost_df["Qty"].astype(int)
+
+    st.session_state.cost_table = cost_df
+else:
+    cost_df = st.session_state.cost_table
 
 # map column
 cost_df = cost_df.rename(columns={
@@ -189,12 +208,13 @@ cost_df["Total Cost"] = cost_df.apply(
 )
 
 edited_df = st.data_editor(
-    cost_df,
+    st.session_state.cost_table,
     key="cost_editor",   # ✅ IMPORTANT
     column_order=default_cols,
     use_container_width=True,
     num_rows="dynamic",
-
+    disabled=False, 
+    
     column_config={
         "EQ": st.column_config.TextColumn(disabled=True),
         "Scope": st.column_config.TextColumn(disabled=True),
