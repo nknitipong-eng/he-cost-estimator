@@ -59,16 +59,22 @@ else:
 # SCOPE
 # =========================
 scope = st.selectbox("Scope", ["Pull & Clean", "Clean at site"])
-mode_time = st.selectbox("Working Mode", ["24 hr", "08:00-23:00"])
+mode_time = st.selectbox("Working Mode", ["24-hr", "08:00-23:00"])
 
 # =========================
 # TIME CALC
 # =========================
 def calc_days(tube, scope, mode):
-    row = time_df[
+    df = time_df[
         (time_df["Mode"] == mode) &
         (time_df["Scope"] == scope)
-    ].iloc[0]
+    ]
+
+    if df.empty:
+        st.error(f"❌ TIME data not found: Mode={mode}, Scope={scope}")
+        return 0  # กัน crash
+
+    row = df.iloc[0]
 
     if tube < 1000:
         return row["<1000"]
