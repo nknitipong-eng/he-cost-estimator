@@ -123,18 +123,18 @@ total_cost = max(total_cost, 9999)
 if scope == "Pull & Clean":
     cost_filter = price_df[
         (price_df["EQ"] == eq) &
-        (price_df["Scope"] != "Clean at site")   # ✅ ตัด Clean at site
+        (price_df["Scope"] != "Clean at site")
     ]
 else:
     cost_filter = price_df[
         (price_df["EQ"] == eq) &
-        (price_df["Scope"] != "Pull & Clean")   # ✅ ตัด Pull & Clean
+        (price_df["Scope"] != "Pull & Clean")
     ]
 
 # =========================
 # COST TABLE
 # =========================
-cost_df = cost_filter[["Scope", "Type", "Price"]].copy()
+cost_df = cost_filter[["Scope", "He_type", "Price"]].copy()
 
 cost_df.rename(columns={
     "Price": "Unit Cost"
