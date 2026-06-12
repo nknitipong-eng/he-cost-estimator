@@ -190,7 +190,7 @@ edited_df = st.data_editor(
         ),
     }
 )
-hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type","OD","Tube","Length","Description"]
+
 
 # 👈 ซ่อนไว้ก่อน
 
