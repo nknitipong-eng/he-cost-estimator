@@ -114,23 +114,6 @@ else:
 total_cost = max(total_cost, 9999)
 
 # =========================
-# COST TABLE
-# =========================
-cost_df = cost_filter[["EQ", "Scope", "He_type", "Time", "Price"]].copy()
-
-cost_df.rename(columns={
-    "Price": "Unit Rate"
-}, inplace=True)
-
-# ✅ FIX 2: ให้ Qty แก้ได้
-if "Qty" not in cost_df.columns:
-    cost_df["Qty"] = 1
-
-# คำนวณ Total
-cost_df["Total"] = cost_df["Unit Rate"] * cost_df["Qty"]
-
-
-# =========================
 # COST FILTER (ตาม Scope)
 # =========================
 
@@ -146,11 +129,26 @@ else:
         (price_df["Scope"] != "Pull & Clean")
     ]
 
+# =========================
+# COST TABLE
+# =========================
+cost_df = cost_filter[["EQ", "Scope", "He_type", "Time", "Price"]].copy()
 
+cost_df.rename(columns={
+    "Price": "Unit Rate"
+}, inplace=flase)
+
+# ✅ FIX 2: ให้ Qty แก้ได้
+if "Qty" not in cost_df.columns:
+    cost_df["Qty"] = 1
+
+# คำนวณ Total
+cost_df["Total"] = cost_df["Unit Rate"] * cost_df["Qty"]
 
 # =========================
 # EDITABLE TABLE
 # =========================
+
 st.subheader("💰 Cost Breakdown")
 
 # ✅ ensure column มี dtype ถูกต้อง
