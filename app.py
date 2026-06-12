@@ -95,9 +95,6 @@ lump_df = price_df[
     (price_df["Lump_sum"] == 1)
 ]
 
-else:
-    lump = pd.DataFrame()
-
 # 2. Non lump sum
 if not lump.empty:
     total_cost = lump["Price"].sum()
