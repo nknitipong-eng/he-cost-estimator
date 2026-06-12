@@ -134,7 +134,7 @@ else:
 # =========================
 # COST TABLE
 # =========================
-cost_df = cost_filter[["Scope", "He_type", "Price"]].copy()
+cost_df = cost_filter[["EQ", "Scope", "He_type", "Time" "Price"]].copy()
 
 cost_df.rename(columns={
     "Price": "Unit Cost"
