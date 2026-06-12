@@ -160,8 +160,6 @@ cost_df["Total Cost"] = cost_df["Unit Rate"] * cost_df["Qty"]
 # ✅ EDITABLE TABLE (ตัวเดียวพอ)
 # =========================
 
-all_cols = edited_df.columns.tolist()
-
 hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type","OD","Tube","Length","Description"]
 
 default_cols = [c for c in all_cols if c not in hidden_cols]
