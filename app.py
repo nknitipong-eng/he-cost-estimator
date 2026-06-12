@@ -190,21 +190,15 @@ edited_df = st.data_editor(
         ),
     }
 )
-
+hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type","OD","Tube","Length","Description"]
 
 # 👈 ซ่อนไว้ก่อน
 
 all_cols = edited_df.columns.tolist()
 
-hidden_cols = ["#", "PO", "Lumpsum", "Clean_Type","OD","Tube","Length","Description"]
+hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type","OD","Tube","Length","Description"]
 
 default_cols = [c for c in all_cols if c not in hidden_cols]
-
-selected_cols = st.multiselect(
-    "Select columns",
-    options=all_cols,
-    default=default_cols
-)
 
 edited_df = st.data_editor(
     edited_df,
@@ -212,6 +206,7 @@ edited_df = st.data_editor(
     use_container_width=True,
     num_rows="dynamic"
 )
+
 
 
 # =========================
