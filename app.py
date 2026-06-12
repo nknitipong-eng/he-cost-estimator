@@ -167,42 +167,38 @@ hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type", "OD", "Tube", "Length", "De
 # ✅ ตัด column ที่ต้องการซ่อนออก
 default_cols = [c for c in all_cols if c not in hidden_cols]
 
-edited_df = st.data_editor()
+edited_df = st.data_editor(
     cost_df,
     column_order=default_cols,
     use_container_width=True,
-    num_rows="dynamic",  # ✅ add/delete row
+    num_rows="dynamic",
 
     column_config={
-    # ✅ lock text columns
-    "EQ": st.column_config.TextColumn(disabled=True),
-    "Scope": st.column_config.TextColumn(disabled=True),
-    "He_type": st.column_config.TextColumn(disabled=True),
-    "Time": st.column_config.TextColumn(disabled=True),
+        "EQ": st.column_config.TextColumn(disabled=True),
+        "Scope": st.column_config.TextColumn(disabled=True),
+        "He_type": st.column_config.TextColumn(disabled=True),
+        "Time": st.column_config.TextColumn(disabled=True),
 
-    # ✅ เพิ่มจากรูป (คุณมีอยู่จริง)
-    "UoM": st.column_config.TextColumn(disabled=True),
-    "Note": st.column_config.TextColumn(disabled=True),
+        "UoM": st.column_config.TextColumn(disabled=True),
+        "Note": st.column_config.TextColumn(disabled=True),
 
-    # ✅ Unit Rate lock + format (มี , ไม่มีทศนิยม)
-    "Unit Rate": st.column_config.NumberColumn(
-        format="%,d",
-        disabled=True
-    ),
+        "Unit Rate": st.column_config.NumberColumn(
+            format="%,d",
+            disabled=True
+        ),
 
-    # ✅ Qty = แก้ได้ column เดียว
-    "Qty": st.column_config.NumberColumn(
-        format="%,d",
-        min_value=1,
-        step=1
-    ),
+        "Qty": st.column_config.NumberColumn(
+            format="%,d",
+            min_value=1,
+            step=1
+        ),
 
-    # ✅ Total Cost (auto calc + lock)
-    "Total Cost": st.column_config.NumberColumn(
-        format="%,d",
-        disabled=True
-    ),
-}
+        "Total Cost": st.column_config.NumberColumn(
+            format="%,d",
+            disabled=True
+        ),
+    }
+)
 
 
 # 👈 ซ่อนไว้ก่อน
