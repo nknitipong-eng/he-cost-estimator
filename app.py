@@ -95,6 +95,15 @@ lump_df = price_df[
     (price_df["Lump_sum"] == 1)
 ]
 
+# ✅ PRIORITY: เอา exact ก่อน
+exact = lump_df[lump_df["Time"] == mode_time]
+
+if not exact.empty:
+    lump = exact
+else:
+    lump = lump_df
+
+
 # 2. Non lump sum
 if not lump.empty:
     total_cost = lump["Price"].sum()
