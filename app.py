@@ -146,12 +146,12 @@ cost_df = cost_df.rename(columns={
     "Price": "Unit Rate"
 })
 
-cost_df["Unit Rate"] = cost_df["Unit Rate"].astype(float)
-cost_df["Qty"] = cost_df.get("Qty", 1).astype(int)
-
 # ✅ ensure column
 if "Qty" not in cost_df.columns:
     cost_df["Qty"] = 1
+
+cost_df["Unit Rate"] = cost_df["Unit Rate"].astype(float)
+cost_df["Qty"] = cost_df.get("Qty", 1).astype(int)
 
 # คำนวณ
 cost_df["Total Cost"] = cost_df["Unit Rate"] * cost_df["Qty"]
