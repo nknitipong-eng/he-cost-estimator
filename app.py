@@ -88,8 +88,8 @@ days = calc_days(tube_qty, scope, mode_time)
 # 1. check lump sum
 lump = price_df[
     (price_df["EQ"] == eq) &
-    (price_df["Time"] == mode_time) | (price_df["Time"] == "All")&
     (price_df["Scope"] == scope) &
+    ((price_df["Time"] == mode_time) | (price_df["Time"] == "All"))&
     (price_df["Lump_sum"] == 1)
 ]
 
@@ -129,9 +129,6 @@ else:
         (price_df["Scope"] != "Pull & Clean")
     ]
 
-# =========================# =========================# =========================# =========================
-
-
 # =========================
 # COST TABLE (TABLE เดียว)
 # =========================
@@ -162,7 +159,7 @@ cost_df["Total Cost"] = cost_df["Unit Rate"] * cost_df["Qty"]
 
 all_cols = cost_df.columns.tolist()
 
-hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type", "OD", "Tube", "Length", "Description"]
+hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type", "OD", "Tube", "Length", "Description","Note"]
 
 # ✅ ตัด column ที่ต้องการซ่อนออก
 default_cols = [c for c in all_cols if c not in hidden_cols]
@@ -201,10 +198,6 @@ edited_df = st.data_editor(
 )
 
 
-# 👈 ซ่อนไว้ก่อน
-
-
-
 
 # =========================
 # ✅ CALCULATE REAL-TIME
@@ -217,9 +210,6 @@ edited_df["Total Cost"] = edited_df["Unit Rate"] * edited_df["Qty"]
 total_cost = edited_df["Total Cost"].sum()
 
 st.metric("Total Cost (THB)", f"{int(total_cost):,}")
-
-
-# =========================# =========================# =========================# =========================
 
 
 # =========================
