@@ -98,8 +98,6 @@ lump = price_df[
 # COST FILTER (ตาม Scope)
 # =========================
 
-# ✅ FIX 1: filter scope ตามที่ต้องการ
-
 if scope == "Pull & Clean":
     cost_filter = price_df[
         (price_df["EQ"] == eq) &
@@ -109,6 +107,17 @@ else:
     cost_filter = price_df[
         (price_df["EQ"] == eq) &
         (price_df["Scope"] != "Pull & Clean")
+    ]
+
+if Time == "08:00-23:00":
+    cost_filter = price_df[
+        (price_df["EQ"] == eq) &
+        (price_df["Time"] != "24-hr")
+    ]
+else:
+   cost_filter = price_df[
+        (price_df["EQ"] == eq) &
+        (price_df["Time"] != "08:00-23:00")
     ]
 
 
