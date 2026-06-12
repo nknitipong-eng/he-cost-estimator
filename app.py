@@ -191,6 +191,16 @@ edited_df = st.data_editor(
     }
 )
 
+
+# 👈 ซ่อนไว้ก่อน
+
+all_cols = edited_df.columns.tolist()
+
+hidden_cols = ["#", "PO", "Lumpsum", "Clean_Type","OD","Tube","Length","Description"]   
+
+visible_cols_default = [c for c in all_cols if c not in hidden_cols]
+
+
 # =========================
 # ✅ CALCULATE REAL-TIME
 # =========================
