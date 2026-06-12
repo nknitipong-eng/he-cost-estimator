@@ -147,26 +147,75 @@ if "Qty" not in cost_df.columns:
 # คำนวณ Total
 cost_df["Total"] = cost_df["Unit Cost"] * cost_df["Qty"]
 
+
+
+
 # =========================
 # EDITABLE TABLE
 # =========================
 st.subheader("💰 Cost Breakdown")
 
+# ✅ ensure column มี dtype ถูกต้อง
+cost_df["Unit Cost"] = cost_df["Unit Cost"].astype(float)
+cost_df["Qty"] = cost_df.get("Qty", 1).astype(int)
+
+# =========================
+# DATA EDITOR
+# =========================
 edited_df = st.data_editor(
     cost_df,
-    num_rows="dynamic",   # ✅ FIX 3: เพิ่ม/ลบ row ได้
-    use_container_width=True
+    num_rows="dynamic",
+    use_container_width=True,
+
+    column_config={
+        # ✅ FIX 1: Unit Cost format ไม่มีทศนิยม + comma
+        "Unit Cost": st.column_config.NumberColumn(
+            format="%d",
+            step=1,
+            disabled=True   # 🔒 กัน user แก้
+        ),
+
+        # ✅ FIX 2: Qty = integer บวกเท่านั้น
+        "Qty": st.column_config.NumberColumn(
+            min_value=1,
+            step=1,   # integer เท่านั้น
+        ),
+
+        # ✅ FIX 3: Total Cost (rename + format)
+        "Total Cost": st.column_config.NumberColumn(
+            format="%d",
+            disabled=True
+        ),
+    }
 )
 
-# ✅ FIX 4: คำนวณใหม่หลังแก้ Qty
-edited_df["Total"] = edited_df["Unit Cost"] * edited_df["Qty"]
+# =========================
+# CALCULATE
+# =========================
+
+# ✅ FIX 4: rename Total → Total Cost
+edited_df["Total Cost"] = edited_df["Unit Cost"] * edited_df["Qty"]
 
 # =========================
-# FINAL COST
+# FORMAT DISPLAY (comma)
 # =========================
-total_cost = edited_df["Total"].sum()
+display_df = edited_df.copy()
 
-st.metric("Total Cost (THB)", f"{total_cost:,.0f}")
+display_df["Unit Cost"] = display_df["Unit Cost"].map(lambda x: f"{int(x):,}")
+display_df["Total Cost"] = display_df["Total Cost"].map(lambda x: f"{int(x):,}")
+
+st.dataframe(display_df, use_container_width=True)
+
+# =========================
+# TOTAL RESULT
+# =========================
+total_cost = edited_df["Total Cost"].sum()
+
+st.metric("Total Cost (THB)", f"{int(total_cost):,}")
+
+
+
+
 
 
 # =========================
