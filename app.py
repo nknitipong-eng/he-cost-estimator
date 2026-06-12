@@ -113,10 +113,47 @@ else:
 
     
     total_cost = unit["Price"].sum()
-    total_cost = 1 * unit["Price"]
+    total_cost = unit["Price"] + 150000
 
 # minimum
 total_cost = max(total_cost, 9999)
+
+# =========================
+# COST BREAKDOWN TABLE
+# =========================
+
+cost_breakdown = []
+
+# LUMP CASE
+if not lump.empty:
+    for _, r in lump.iterrows():
+        cost_breakdown.append({
+            "Item": r["Scope"],
+            "Type": r["Type"],
+            "Unit Cost": r["Price"],
+            "Qty": 1,
+            "Total": r["Price"]
+        })
+
+# UNIT CASE
+else:
+    unit = price_df[
+        (price_df["Scope"] == scope) &
+        (price_df["Lump_sum"] == 0)
+    ].iloc[0]
+
+    cost_breakdown.append({
+        "Item": scope,
+        "Type": "UNIT",
+        "Unit Cost": unit["Price"],
+        "Qty": tube_qty,
+        "Total": tube_qty * unit["Price"]
+    })
+
+cost_df = pd.DataFrame(cost_breakdown)
+
+st.subheader("💰 Cost Breakdown")
+st.dataframe(cost_df)
 
 # =========================
 # OUTPUT
@@ -139,6 +176,27 @@ if st.button("Add Record"):
         "Days": days,
         "Cost (THB)": total_cost
     })
+
+# Remove Saved Records
+
+t.subheader("Saved Records")
+
+if not df.empty:
+    for i, r in df.iterrows():
+        cols = st.columns([6,1])
+        
+        cols[0].write(r.to_dict())
+        
+        if cols[1].button("❌", key=f"del_{i}"):
+            st.session_state.records.pop(i)
+            st.rerun()
+
+    st.dataframe(pd.DataFrame(st.session_state.records))
+
+# Clear Saved Records
+if st.button("🗑 Clear All Records"):
+    st.session_state.records = []
+    st.rerun()
 
 # =========================
 # DISPLAY
