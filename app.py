@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import io
 
-st.set_page_config(page_title="Heat Exchanger Cost Estimator", layout="wide")
+st.set_page_config(page_title="Heat Exchanger Cost Estimator", layout="short")
 
 st.title("🔥 Heat Exchanger Cost Estimator")
 
@@ -35,10 +35,9 @@ if "records" not in st.session_state:
 mode = st.radio("Mode", ["Select Equipment", "Manual"])
 
 if mode == "Select Equipment":
-    eq = st.selectbox("Equipment No", spec_df["Equipment No"])
     
+    eq = st.selectbox("Equipment No", spec_df["Equipment No"])
     row = spec_df[spec_df["Equipment No"] == eq].iloc[0]
-
     He_type = row["He_type"]
     tube_qty = int(row["Tube_Qty"])
     Tube_OD = int(row["Tube_OD"])
@@ -94,6 +93,24 @@ lump = price_df[
     ((price_df["Time"] == mode_time) | (price_df["Time"] == "All")) &
     (price_df["Lump_sum"] == 1)
 ]
+
+# =========================
+# COST FILTER (ตาม Scope)
+# =========================
+
+# ✅ FIX 1: filter scope ตามที่ต้องการ
+
+if scope == "Pull & Clean":
+    cost_filter = price_df[
+        (price_df["EQ"] == eq) &
+        (price_df["Scope"] != "Clean at site")
+    ]
+else:
+    cost_filter = price_df[
+        (price_df["EQ"] == eq) &
+        (price_df["Scope"] != "Pull & Clean")
+    ]
+
 
 # 2. Non lump sum
 if not lump.empty:
