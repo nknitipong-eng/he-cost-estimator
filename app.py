@@ -181,7 +181,7 @@ if st.button("Add Record"):
 
 # Remove Saved Records
 
-t.subheader("Saved Records")
+st.subheader("Saved Records")
 
 if not df.empty:
     for i, r in df.iterrows():
