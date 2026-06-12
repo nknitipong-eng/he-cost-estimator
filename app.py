@@ -174,31 +174,35 @@ edited_df = st.data_editor(
     num_rows="dynamic",  # ✅ add/delete row
 
     column_config={
-        "EQ": st.column_config.TextColumn(disabled=True),
-        "Scope": st.column_config.TextColumn(disabled=True),
-        "He_type": st.column_config.TextColumn(disabled=True),
-        "Time": st.column_config.TextColumn(disabled=True),
+    # ✅ lock text columns
+    "EQ": st.column_config.TextColumn(disabled=True),
+    "Scope": st.column_config.TextColumn(disabled=True),
+    "He_type": st.column_config.TextColumn(disabled=True),
+    "Time": st.column_config.TextColumn(disabled=True),
 
-        # ✅ Unit Rate lock + format
-        "Unit Rate": st.column_config.NumberColumn(
-            format="%,d",
-            disabled=True
-        ),
+    # ✅ เพิ่มจากรูป (คุณมีอยู่จริง)
+    "UoM": st.column_config.TextColumn(disabled=True),
+    "Note": st.column_config.TextColumn(disabled=True),
 
-        # ✅ Qty = integer only
-        "Qty": st.column_config.NumberColumn(
-            format="%,d",
-            min_value=1,
-            step=1
-        ),
+    # ✅ Unit Rate lock + format (มี , ไม่มีทศนิยม)
+    "Unit Rate": st.column_config.NumberColumn(
+        format="%,d",
+        disabled=True
+    ),
 
-        # ✅ Total Cost auto
-        "Total Cost": st.column_config.NumberColumn(
-            format="%,d",
-            disabled=True
-        ),
-    }
-)
+    # ✅ Qty = แก้ได้ column เดียว
+    "Qty": st.column_config.NumberColumn(
+        format="%,d",
+        min_value=1,
+        step=1
+    ),
+
+    # ✅ Total Cost (auto calc + lock)
+    "Total Cost": st.column_config.NumberColumn(
+        format="%,d",
+        disabled=True
+    ),
+}
 
 
 # 👈 ซ่อนไว้ก่อน
