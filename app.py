@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import io
 
-st.set_page_config(page_title="Heat Exchanger Cost Estimator", layout="short")
+st.set_page_config(page_title="Heat Exchanger Cost Estimator", layout="centered")
 
 st.title("🔥 Heat Exchanger Cost Estimator")
 
