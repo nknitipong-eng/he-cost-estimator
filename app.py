@@ -139,7 +139,7 @@ else:
     ].iloc[0]
 
     cost_breakdown.append({
-        "Item": scope,
+        "Scope": scope,
         "Type": "UNIT",
         "Unit Cost": unit["Price"],
         "Qty": tube_qty,
