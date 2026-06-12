@@ -179,7 +179,14 @@ hidden_cols = ["#", "#PO", "Lump_sum", "Clean_Type", "OD", "Tube", "Length", "De
 # ✅ ตัด column ที่ต้องการซ่อนออก
 default_cols = [c for c in all_cols if c not in hidden_cols]
 
-cost_df["Total Cost"] = cost_df["Unit Rate"] * cost_df["Qty"]    # ✅ CALC BEFORE RENDER
+
+# ✅ PRE-CALC
+# =========================
+cost_df["Total Cost"] = cost_df.apply(
+    lambda r: r["Unit Rate"] if r["UoM"] == "LUMP"
+    else r["Unit Rate"] * r["Qty"],
+    axis=1
+)
 
 edited_df = st.data_editor(
     cost_df,
@@ -215,22 +222,21 @@ edited_df = st.data_editor(
     }
 )
 
-
+# ✅ RECALC หลัง edit
+# =========================
+edited_df["Total Cost"] = edited_df.apply(
+    lambda r: r["Unit Rate"] if r["UoM"] == "LUMP"
+    else r["Unit Rate"] * r["Qty"],
+    axis=1
+)
 
 # =========================
-# ✅ CALCULATE REAL-TIME
-# =========================
-edited_df["Total Cost"] = edited_df["Unit Rate"] * edited_df["Qty"]
-
-st.dataframe(edited_df)        # ✅ show updated immediately
-
-
-# =========================
-# ✅ RESULT
+# ✅ TOTAL
 # =========================
 total_cost = edited_df["Total Cost"].sum()
 
 st.metric("Total Cost (THB)", f"{int(total_cost):,}")
+
 
 
 # =========================
