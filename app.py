@@ -148,7 +148,7 @@ if "Qty" not in cost_df.columns:
 cost_df["Total"] = cost_df["Unit Cost"] * cost_df["Qty"]
 
 # =========================
-# EDITABLE TABLE + DELETE
+# EDITABLE TABLE
 # =========================
 st.subheader("💰 Cost Breakdown")
 
@@ -160,24 +160,6 @@ edited_df = st.data_editor(
 
 # ✅ FIX 4: คำนวณใหม่หลังแก้ Qty
 edited_df["Total"] = edited_df["Unit Cost"] * edited_df["Qty"]
-
-# =========================
-# DELETE ROW BUTTON
-# =========================
-st.write("🗑 Delete Row")
-
-rows_to_delete = []
-
-for i in range(len(edited_df)):
-    cols = st.columns([6,1])
-    cols[0].write(f"Row {i} - {edited_df.iloc[i]['Scope']}")
-    
-    if cols[1].button("❌", key=f"delete_row_{i}"):
-        rows_to_delete.append(i)
-
-# ลบ row ที่เลือก
-if rows_to_delete:
-    edited_df = edited_df.drop(rows_to_delete).reset_index(drop=True)
 
 # =========================
 # FINAL COST
