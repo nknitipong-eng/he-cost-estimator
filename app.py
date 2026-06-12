@@ -179,23 +179,33 @@ if st.button("Add Record"):
         "Cost (THB)": total_cost
     })
 
-# Remove Saved Records
+# =========================
+# DISPLAY + DELETE
+# =========================
+
+df = pd.DataFrame(st.session_state.records)   # ✅ FIX 1
 
 st.subheader("Saved Records")
 
 if not df.empty:
-    for i, r in df.iterrows():
+    for i, r in enumerate(st.session_state.records):   # ✅ FIX 2
         cols = st.columns([6,1])
-        
-        cols[0].write(r.to_dict())
-        
+
+        cols[0].write(r)
+
         if cols[1].button("❌", key=f"del_{i}"):
             st.session_state.records.pop(i)
             st.rerun()
 
     st.dataframe(pd.DataFrame(st.session_state.records))
 
-# Clear Saved Records
+else:
+    st.info("No records yet")   # ✅ FIX 3
+
+
+# =========================
+# CLEAR ALL
+# =========================
 if st.button("🗑 Clear All Records"):
     st.session_state.records = []
     st.rerun()
