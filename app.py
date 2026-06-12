@@ -39,23 +39,23 @@ if mode == "Select Equipment":
     
     row = spec_df[spec_df["Equipment No"] == eq].iloc[0]
 
-    he_type = row["he_type"]
+    He_type = row["He_type"]
     tube_qty = int(row["Tube_Qty"])
     Tube_OD = int(row["Tube_OD"])
     Tube_Length_mm = int(row["Tube_Length_mm"])
 
-    st.write("Type:", he_type)
+    st.write("Type:", He_type)
     st.write("Tube Qty:", tube_qty)
 
     st.write("Tube OD:", Tube_OD)
 
 else:
     eq = "Manual"
-    he_type = st.selectbox("HE Type", ["Floating","Fixed", "U-Tube"])
+    He_type = st.selectbox("HE Type", ["Floating","Fixed", "U-Tube"])
     tube_OD = st.selectbox("Tube OD", [19.05, 25.4])
     tube_qty = st.number_input("Tube Qty", value=1000)
     
-    if    he_type == "U-tube":
+    if    He_type == "U-tube":
         tube_Length_mm = st.selectbox("Tube Lenth (mm)", ["100-200U", "201-400U", "401-600U", "601-800U", "801-1000U"])
     else:
         tube_Length_mm = st.selectbox("Tube Lenth (m)", ["0-4.88 m", "4.88 m - 7.32 m"])
@@ -100,7 +100,7 @@ if not lump.empty:
 else:
     unit = price_df[
 
-        (price_df["he_type"] == he_type) &
+        (price_df["He_type"] == He_type) &
         (price_df["Tube_OD"] == Tube_OD) &
         (price_df["Tube_Length_mm"] == Tube_Length_mm) &
         (price_df["Tube_Qty"] == Tube_Qty) &
@@ -130,7 +130,7 @@ if not lump.empty:
     for _, r in lump.iterrows():
         cost_breakdown.append({
             "Item": r["Scope"],
-            "Type": r["Type"],
+            "Type": r["He_type"],
             "Unit Cost": r["Price"],
             "Qty": 1,
             "Total": r["Price"]
@@ -171,7 +171,7 @@ st.metric("Total Cost (THB)", f"{total_cost:,.0f}")
 if st.button("Add Record"):
     st.session_state.records.append({
         "Equipment": eq,
-        "Type": he_type,
+        "Type": He_type,
         "Tube Qty": tube_qty,
         "Scope": scope,
         "Work Mode": mode_time,
