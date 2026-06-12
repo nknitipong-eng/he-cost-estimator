@@ -145,7 +145,7 @@ if "Qty" not in cost_df.columns:
     cost_df["Qty"] = 1
 
 # คำนวณ Total
-cost_df["Total"] = cost_df["Unit Cost"] * cost_df["Qty"]
+cost_df["Total"] = cost_df["Unit Rate"] * cost_df["Qty"]
 
 
 # =========================
@@ -154,7 +154,7 @@ cost_df["Total"] = cost_df["Unit Cost"] * cost_df["Qty"]
 st.subheader("💰 Cost Breakdown")
 
 # ✅ ensure column มี dtype ถูกต้อง
-cost_df["Unit Cost"] = cost_df["Unit Cost"].astype(float)
+cost_df["Unit Rate"] = cost_df["Unit Rate"].astype(float)
 cost_df["Qty"] = cost_df.get("Qty", 1).astype(int)
 
 # =========================
@@ -166,8 +166,8 @@ edited_df = st.data_editor(
     use_container_width=True,
 
     column_config={
-        # ✅ FIX 1: Unit Cost format ไม่มีทศนิยม + comma
-        "Unit Cost": st.column_config.NumberColumn(
+        # ✅ FIX 1: Unit Rate format ไม่มีทศนิยม + comma
+        "Unit Rate": st.column_config.NumberColumn(
             format="%d",
             step=1,
             disabled=True   # 🔒 กัน user แก้
@@ -192,14 +192,14 @@ edited_df = st.data_editor(
 # =========================
 
 # ✅ FIX 4: rename Total → Total Cost
-edited_df["Total Cost"] = edited_df["Unit Cost"] * edited_df["Qty"]
+edited_df["Total Cost"] = edited_df["Unit Rate"] * edited_df["Qty"]
 
 # =========================
 # FORMAT DISPLAY (comma)
 # =========================
 display_df = edited_df.copy()
 
-display_df["Unit Cost"] = display_df["Unit Cost"].map(lambda x: f"{int(x):,}")
+display_df["Unit Rate"] = display_df["Unit Rate"].map(lambda x: f"{int(x):,}")
 display_df["Total Cost"] = display_df["Total Cost"].map(lambda x: f"{int(x):,}")
 
 st.dataframe(display_df, use_container_width=True)
